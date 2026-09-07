@@ -1,6 +1,6 @@
 # Common tasks and the tools that serve them
 
-Tool names are the Partner API operation IDs. In Claude Code the full name is `mcp__plugin_monta_monta-partner-api__<operation-id>`. Safety: **R** read-only, **M** mutating (confirm), **D** destructive (confirm with the concrete target restated).
+Tool names are the Partner API operation IDs. In Claude Code the full name is prefixed with the server name, for example `mcp__monta-partner-api__get-charge-points` (a `plugin_monta_` segment may also appear depending on how the plugin was installed). Safety: **R** read-only, **M** mutating (confirm), **D** destructive (confirm with the concrete target restated).
 
 ## Identity and environment
 
