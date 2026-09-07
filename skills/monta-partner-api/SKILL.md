@@ -7,6 +7,8 @@ description: Core knowledge for working with the Monta Partner API through the M
 
 Monta is a platform for operating EV charging infrastructure. The MCP server exposes one tool per Partner API endpoint, named after the endpoint's operation ID (`get-charge-points`, `get-charge`, `post-charge-point`, `delete-team`, and so on). Full reference: [developer.monta.com](https://developer.monta.com).
 
+Tools are often deferred because there are several hundred of them: when a tool such as `get-sites` is not in your visible list, search for it by operation ID and load it. Only conclude a tool is unavailable after searching, and then check the credential's scopes with `get-current-consumer`.
+
 Read `references/endpoints.md` for the task-to-endpoint map and the full safety classification. Read `references/conventions.md` for auth, pagination, dates, errors, and webhooks in detail.
 
 ## Domain model

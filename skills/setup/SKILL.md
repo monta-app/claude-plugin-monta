@@ -9,7 +9,7 @@ Get the user connected to the hosted Monta MCP server, verify it works, and rout
 
 ## Step 1: Diagnose the current state
 
-Check which Monta tools are available. Their names contain `monta-partner-api` and end with the operation ID, for example `get-current-consumer`.
+Check which Monta tools are available. Their names contain `monta-partner-api` and end with the operation ID, for example `get-current-consumer`. The server exposes several hundred tools, so clients usually defer them: if a tool is not in your visible list, search for it by operation ID before deciding it is missing.
 
 | What you see | Branch |
 |---|---|
