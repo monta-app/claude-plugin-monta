@@ -10,7 +10,7 @@
   },
   "homepage": "https://developer.monta.com",
   "repository": "https://github.com/monta-app/claude-plugin-monta",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "keywords": [
     "monta",
     "ev-charging",

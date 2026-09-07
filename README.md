@@ -105,4 +105,4 @@ claude mcp add --transport http --scope user monta-partner-api https://partner-a
 
 ## License
 
-[Apache-2.0](LICENSE)
+[MIT](LICENSE)
