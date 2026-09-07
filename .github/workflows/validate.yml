@@ -1,0 +1,49 @@
+name: Validate plugin
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Validate plugin manifest, skills, and commands (strict)
+        run: |
+          mv .claude-plugin/marketplace.json /tmp/marketplace.json
+          claude plugin validate . --strict
+          mv /tmp/marketplace.json .claude-plugin/marketplace.json
+      - name: Validate marketplace manifest (strict)
+        run: claude plugin validate . --strict
+      - name: Check JSON files parse
+        run: |
+          for f in .mcp.json .claude-plugin/plugin.json .claude-plugin/marketplace.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" && echo "ok $f"
+          done
+      - name: Refuse credentials in the MCP config
+        run: |
+          if grep -Ei 'client[_-]?secret"?\s*:|bearer [a-z0-9]|x-monta-auth"?\s*:\s*"[^$]' .mcp.json; then
+            echo "Credential-looking value in .mcp.json"; exit 1
+          fi
+
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
