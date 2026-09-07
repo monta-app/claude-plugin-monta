@@ -55,7 +55,7 @@ The plugin ships a remote MCP server at `https://partner-api-mcp.monta.app/mcp`.
 1. Call `get-current-consumer`. Report `name`, `operatorId`, `teamIds` (empty means all teams of the operator), `scopes`, and `rateLimit` per `rateLimitIntervalInSeconds`.
 2. Say clearly which environment this is. The hosted server targets **production**; anything the user changes affects real chargers and real money.
 3. Run one read to prove it: `get-teams` with `perPage: 5`, then `get-sites` with `perPage: 5`. Summarise counts and names.
-4. Offer next steps: `/monta:sites`, `/monta:charge-points`, `/monta:charges`, or `/monta:charger-report`.
+4. Offer next steps: `/monta:help` for an overview, or `/monta:sites`, `/monta:charge-points`, `/monta:charges`, `/monta:charger-report`, `/monta:teams`, `/monta:wallet`, `/monta:webhooks`.
 
 ## Rate limits and other common failures
 

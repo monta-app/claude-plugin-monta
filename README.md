@@ -60,10 +60,17 @@ claude mcp add --transport http --scope user monta-api https://partner-api-mcp.m
 | Command | What it does |
 |---|---|
 | `/monta:setup` | Connects and verifies the Monta MCP server, explains credentials and scopes, and diagnoses 401/403 problems |
+| `/monta:help` | Shows what the plugin can do, grouped by area, with example prompts |
 | `/monta:sites [team or name]` | Lists sites with charge point counts and availability |
 | `/monta:charge-points [site] [state]` | Lists charge points with state, connectors, and last-connected time |
+| `/monta:charge-point <id or serial> [period]` | Deep dive on one charger: status, recent charges, statistics, and logs |
 | `/monta:charges [period] [filter]` | Recent charging sessions with kWh, revenue, and failure summary |
 | `/monta:charger-report [team or charge points] [period]` | Sessions and kWh per charge point for a period |
+| `/monta:teams [operator or name]` | Teams with type, currency, frozen state, and site counts |
+| `/monta:wallet [team] [period]` | Wallet balances and recent wallet transactions for a team |
+| `/monta:webhooks [status]` | Webhook configuration and recent deliveries, including failures |
+
+Everything else the Monta API offers (members, price groups, tariffs, tokens, vehicles, OCPP configuration, audit log, CDRs, and all write operations) is available in plain language; `/monta:help` lists the areas.
 
 ## Skills
 
