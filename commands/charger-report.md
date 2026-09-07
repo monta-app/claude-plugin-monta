@@ -3,7 +3,7 @@ description: Pull the Monta charger report (sessions and kWh per charge point) f
 argument-hint: "[team ID or charge point ID(s)] [period, e.g. 30d or 2026-08-01..2026-08-31]"
 ---
 
-Fetch the charger report from the Monta Partner API and summarise it. Read-only.
+Fetch the charger report from the Monta API and summarise it. Read-only.
 
 Arguments: `$ARGUMENTS` (a team ID or one or more charge point IDs, and a period). Default period: the last 30 days.
 

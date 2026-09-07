@@ -1,6 +1,6 @@
-# Monta Partner API conventions
+# Monta API conventions
 
-Source: https://developer.monta.com (Partner API reference and guides) and the OpenAPI spec at https://developer.monta.com/openapi/monta-partner-api-v1.yml.
+Source: https://developer.monta.com (Monta API reference and guides) and the OpenAPI spec at https://developer.monta.com/openapi/monta-partner-api-v1.yml.
 
 ## Environments
 

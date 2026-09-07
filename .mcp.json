@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "monta-partner-api": {
+    "monta-api": {
       "type": "http",
       "url": "https://partner-api-mcp.monta.app/mcp"
     }

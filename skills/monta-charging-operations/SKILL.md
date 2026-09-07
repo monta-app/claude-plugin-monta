@@ -1,11 +1,11 @@
 ---
 name: monta-charging-operations
-description: Step-by-step workflows for EV charging operators using Monta. Use when the user wants to investigate a failed, stuck, or zero-kWh charge, check why a charger is offline or in error, pull site or charger utilisation, reconcile charges against wallet transactions or invoices, or onboard a new site or charge point. Builds on the monta-partner-api skill.
+description: Step-by-step workflows for EV charging operators using Monta. Use when the user wants to investigate a failed, stuck, or zero-kWh charge, check why a charger is offline or in error, pull site or charger utilisation, reconcile charges against wallet transactions or invoices, or onboard a new site or charge point. Builds on the monta-api skill.
 ---
 
 # Monta charging operations
 
-Workflows for day-to-day operator questions. Tool names, filters, safety rules, and conventions are in the `monta-partner-api` skill; read it first. Everything below starts with reads. Only the final step of some workflows changes anything, and those steps require confirmation with the concrete target restated.
+Workflows for day-to-day operator questions. Tool names, filters, safety rules, and conventions are in the `monta-api` skill; read it first. Everything below starts with reads. Only the final step of some workflows changes anything, and those steps require confirmation with the concrete target restated.
 
 ## Investigate a failed or stuck charge
 

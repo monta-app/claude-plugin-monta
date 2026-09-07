@@ -10,7 +10,7 @@
     {
       "name": "monta",
       "source": "./",
-      "description": "Operate EV charging infrastructure through the Monta Partner API.",
+      "description": "Operate EV charging infrastructure through the Monta API.",
       "category": "productivity",
       "homepage": "https://developer.monta.com"
     }

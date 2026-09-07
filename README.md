@@ -1,16 +1,16 @@
 # Monta
 
-[Monta](https://monta.com) is the operating platform for EV charging. This plugin connects Claude to the [Monta Partner API](https://developer.monta.com) through Monta's hosted MCP server, so operators, fleet managers, and integrators can inspect and manage their charging infrastructure in plain language: sites, charge points, charging sessions, reports, teams, pricing, wallets, and webhooks.
+[Monta](https://monta.com) is the operating platform for EV charging. This plugin connects Claude to the [Monta API](https://developer.monta.com) through Monta's hosted MCP server, so operators, fleet managers, and integrators can inspect and manage their charging infrastructure in plain language: sites, charge points, charging sessions, reports, teams, pricing, wallets, and webhooks.
 
 The plugin bundles:
 
-- A remote MCP connector to `https://partner-api-mcp.monta.app/mcp`, which exposes one tool per Partner API endpoint and only the tools your credentials allow.
+- A remote MCP connector to `https://partner-api-mcp.monta.app/mcp`, which exposes one tool per Monta API endpoint and only the tools your credentials allow.
 - Skills that teach Claude the Monta domain model, API conventions, and operator workflows.
 - Slash commands for the most common first tasks.
 
 ## Prerequisites
 
-- A Monta Partner API credential (Client ID and Client Secret). Create one in [Monta Hub](https://hub.monta.app) under **Account settings → Integrations → API** (or **Applications → Create app → Custom**). See [Access and set up API keys in Monta Hub](https://monta.com/help/en_US/monta-hub-account-settings/access-and-set-up-api-keys-in-monta-hub). Partner API access requires an agreement with Monta; see [Getting started](https://developer.monta.com/docs/getting-started).
+- A Monta API credential (Client ID and Client Secret). Create one in [Monta Hub](https://hub.monta.app) under **Account settings → Integrations → API** (or **Applications → Create app → Custom**). See [Access and set up API keys in Monta Hub](https://monta.com/help/en_US/monta-hub-account-settings/access-and-set-up-api-keys-in-monta-hub). Monta API access requires an agreement with Monta; see [Getting started](https://developer.monta.com/docs/getting-started).
 - Claude Code, Claude Desktop, Cowork, or claude.ai with plugin support.
 
 For reporting and investigation, a credential with `all:read` is enough and is the safer choice.
@@ -43,7 +43,7 @@ For development, `claude --plugin-dir ./claude-plugin-monta` loads it without in
 
 Run `/monta:setup` and follow the steps, or:
 
-1. In Claude Code, run `/mcp`, pick `monta-partner-api`, and choose **Authenticate**. A sign-in page from `partner-api-mcp.monta.app` asks for your Client ID and Client Secret. They are forwarded to the Partner API and are not stored by the MCP server.
+1. In Claude Code, run `/mcp`, pick `monta-api`, and choose **Authenticate**. A sign-in page from `partner-api-mcp.monta.app` asks for your Client ID and Client Secret. They are forwarded to the Monta API and are not stored by the MCP server.
 2. Ask Claude "who am I in Monta?" Claude calls the consumer endpoint and reports your operator, team restrictions, scopes, and rate limit.
 
 Headless or shared setups can skip the browser flow and pass credentials from environment variables instead. Run this in your own terminal:
@@ -51,7 +51,7 @@ Headless or shared setups can skip the browser flow and pass credentials from en
 ```bash
 export MONTA_CLIENT_ID=...    # never commit these
 export MONTA_CLIENT_SECRET=...
-claude mcp add --transport http --scope user monta-partner-api https://partner-api-mcp.monta.app/mcp \
+claude mcp add --transport http --scope user monta-api https://partner-api-mcp.monta.app/mcp \
   --header "X-Monta-Auth: ${MONTA_CLIENT_ID}:${MONTA_CLIENT_SECRET}"
 ```
 
@@ -70,7 +70,7 @@ claude mcp add --transport http --scope user monta-partner-api https://partner-a
 | Skill | What it does |
 |---|---|
 | `setup` | Guided connection, credential, and troubleshooting flow |
-| `monta-partner-api` | Domain model, auth and scopes, pagination, dates, rate limits, and the read-only / mutating / destructive classification of every tool group |
+| `monta-api` | Domain model, auth and scopes, pagination, dates, rate limits, and the read-only / mutating / destructive classification of every tool group |
 | `monta-charging-operations` | Operator workflows: failed or stuck charges, offline chargers, site utilisation, charge-to-wallet reconciliation, onboarding a site or charge point |
 
 ## Example prompts
@@ -97,10 +97,10 @@ claude mcp add --transport http --scope user monta-partner-api https://partner-a
 
 ## Documentation and support
 
-- [Monta Partner API documentation](https://developer.monta.com)
+- [Monta API documentation](https://developer.monta.com)
 - [Hosted MCP server documentation](https://partner-api-mcp.monta.app/docs)
 - [Monta Hub](https://hub.monta.app)
-- Partner API support: partners@monta.com or the [contact form](https://www.monta.com/uk/contact)
+- Monta API support: partners@monta.com or the [contact form](https://www.monta.com/uk/contact)
 - Issues with this plugin: open an issue in this repository
 
 ## License

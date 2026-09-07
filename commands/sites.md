@@ -3,7 +3,7 @@ description: List Monta sites with charge point counts and availability
 argument-hint: "[team ID or name filter]"
 ---
 
-List sites from the Monta Partner API. Read-only.
+List sites from the Monta API. Read-only.
 
 Arguments: `$ARGUMENTS` (optional team ID or a text filter on site name).
 

@@ -3,7 +3,7 @@ description: Show recent Monta charging sessions for a period with a summary of 
 argument-hint: "[period, e.g. today, 7d, 2026-09-01..2026-09-07] [site, charge point, or team filter]"
 ---
 
-List recent charges from the Monta Partner API and summarise them. Read-only.
+List recent charges from the Monta API and summarise them. Read-only.
 
 Arguments: `$ARGUMENTS` (a period and an optional filter). Default period: the last 24 hours. Accepted periods: `today`, `yesterday`, `7d`, `30d`, or `YYYY-MM-DD..YYYY-MM-DD`.
 

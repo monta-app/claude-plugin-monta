@@ -1,11 +1,11 @@
 ---
-name: monta-partner-api
-description: Core knowledge for working with the Monta Partner API through the Monta MCP tools. Use whenever the user asks about Monta, EV charge points, chargers, charging sessions, sites, teams, wallets, price groups, charge auth tokens, or webhooks, or when calling any get-*, post-*, patch-*, put-*, or delete-* Monta tool. Covers the domain model, auth and scopes, pagination, dates, rate limits, and which operations need confirmation.
+name: monta-api
+description: Core knowledge for working with the Monta API through the Monta MCP tools. Use whenever the user asks about Monta, EV charge points, chargers, charging sessions, sites, teams, wallets, price groups, charge auth tokens, or webhooks, or when calling any get-*, post-*, patch-*, put-*, or delete-* Monta tool. Covers the domain model, auth and scopes, pagination, dates, rate limits, and which operations need confirmation.
 ---
 
-# Monta Partner API
+# Monta API
 
-Monta is a platform for operating EV charging infrastructure. The MCP server exposes one tool per Partner API endpoint, named after the endpoint's operation ID (`get-charge-points`, `get-charge`, `post-charge-point`, `delete-team`, and so on). Full reference: [developer.monta.com](https://developer.monta.com).
+Monta is a platform for operating EV charging infrastructure. The MCP server exposes one tool per Monta API endpoint, named after the endpoint's operation ID (`get-charge-points`, `get-charge`, `post-charge-point`, `delete-team`, and so on). Full reference: [developer.monta.com](https://developer.monta.com).
 
 Tools are often deferred because there are several hundred of them: when a tool such as `get-sites` is not in your visible list, search for it by operation ID and load it. Only conclude a tool is unavailable after searching, and then check the credential's scopes with `get-current-consumer`.
 
@@ -40,7 +40,7 @@ States you will see:
 
 ## Auth and scopes
 
-- The hosted MCP server authenticates with the user's Client ID and Client Secret and refreshes Partner API tokens itself. You never handle tokens.
+- The hosted MCP server authenticates with the user's Client ID and Client Secret and refreshes Monta API tokens itself. You never handle tokens.
 - Scopes are `entity:permission` with `read` < `write` < `delete` (higher levels include lower ones); `all:delete` is full access. Tools the credential cannot call are not exposed. Check `get-current-consumer` before concluding something is broken.
 - A credential may be restricted to `teamIds`. Outside those teams you get 403 or 404.
 

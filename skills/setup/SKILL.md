@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Connect Claude to the Monta Partner API and verify the connection. Use when the user installs the Monta plugin, runs /monta:setup, asks how to get Monta API credentials, or when Monta tools are missing, return 401 or 403, or the connection looks broken.
+description: Connect Claude to the Monta API and verify the connection. Use when the user installs the Monta plugin, runs /monta:setup, asks how to get Monta API credentials, or when Monta tools are missing, return 401 or 403, or the connection looks broken.
 ---
 
 # Monta setup
@@ -9,7 +9,7 @@ Get the user connected to the hosted Monta MCP server, verify it works, and rout
 
 ## Step 1: Diagnose the current state
 
-Check which Monta tools are available. Their names contain `monta-partner-api` and end with the operation ID, for example `get-current-consumer`. The server exposes several hundred tools, so clients usually defer them: if a tool is not in your visible list, search for it by operation ID before deciding it is missing.
+Check which Monta tools are available. Their names contain `monta-api` and end with the operation ID, for example `get-current-consumer`. The server exposes several hundred tools, so clients usually defer them: if a tool is not in your visible list, search for it by operation ID before deciding it is missing.
 
 | What you see | Branch |
 |---|---|
@@ -20,19 +20,19 @@ Check which Monta tools are available. Their names contain `monta-partner-api` a
 
 ## Branch: Not connected
 
-The plugin ships a remote MCP server at `https://partner-api-mcp.monta.app/mcp`. It needs Monta Partner API credentials (a Client ID and a Client Secret).
+The plugin ships a remote MCP server at `https://partner-api-mcp.monta.app/mcp`. It needs Monta API credentials (a Client ID and a Client Secret).
 
 1. If the user does not have credentials yet, send them to get some:
    - Sign in to [Monta Hub](https://hub.monta.app) as an operator admin.
    - Go to **Account settings → Integrations → API** (newer accounts: **Applications → Create app → Custom**), create an API credential, choose its scopes, and copy the Client ID and Client Secret. The secret is shown once.
-   - Help article: [Access and set up API keys in Monta Hub](https://monta.com/help/en_US/monta-hub-account-settings/access-and-set-up-api-keys-in-monta-hub). Partner API access requires a commercial agreement with Monta; see [Getting started](https://developer.monta.com/docs/getting-started).
+   - Help article: [Access and set up API keys in Monta Hub](https://monta.com/help/en_US/monta-hub-account-settings/access-and-set-up-api-keys-in-monta-hub). Monta API access requires a commercial agreement with Monta; see [Getting started](https://developer.monta.com/docs/getting-started).
    - For read-only work, recommend a credential with `all:read`. Only grant `write` or `delete` scopes when the user actually needs to change things.
 2. Connect. Pick the path that matches the client:
-   - **Claude Code:** run `/mcp`, select `monta-partner-api`, and choose **Authenticate**. A browser page from `partner-api-mcp.monta.app` asks for the Monta Client ID and Client Secret. Credentials are sent to the MCP server only; it forwards them to the Partner API and does not store them.
+   - **Claude Code:** run `/mcp`, select `monta-api`, and choose **Authenticate**. A browser page from `partner-api-mcp.monta.app` asks for the Monta Client ID and Client Secret. Credentials are sent to the MCP server only; it forwards them to the Monta API and does not store them.
    - **Claude Code, headless or shared config:** instead of the browser flow, set `MONTA_CLIENT_ID` and `MONTA_CLIENT_SECRET` in the environment and add the server with a header. Tell the user to run this in their own terminal (not through Claude):
 
      ```bash
-     claude mcp add --transport http --scope user monta-partner-api https://partner-api-mcp.monta.app/mcp \
+     claude mcp add --transport http --scope user monta-api https://partner-api-mcp.monta.app/mcp \
        --header "X-Monta-Auth: ${MONTA_CLIENT_ID}:${MONTA_CLIENT_SECRET}"
      ```
    - **Claude Desktop, Cowork, or claude.ai:** open the plugin's or connector's settings, enter `https://partner-api-mcp.monta.app/mcp` if asked for a URL, and complete the sign-in page with the Client ID and Client Secret.
@@ -40,8 +40,8 @@ The plugin ships a remote MCP server at `https://partner-api-mcp.monta.app/mcp`.
 
 ## Branch: Bad or missing credentials (401)
 
-- The Client ID or Client Secret is wrong, revoked, or was never entered. Ask the user to re-authenticate (`/mcp` → `monta-partner-api` → **Authenticate**, or `claude mcp remove monta-partner-api` and re-add it with corrected environment variables).
-- The Partner API error `CONSUMER_NOT_FOUND` means the credential pair does not exist in this environment. Sandbox credentials do not work against production and vice versa. The hosted MCP server always talks to **production**.
+- The Client ID or Client Secret is wrong, revoked, or was never entered. Ask the user to re-authenticate (`/mcp` → `monta-api` → **Authenticate**, or `claude mcp remove monta-api` and re-add it with corrected environment variables).
+- The Monta API error `CONSUMER_NOT_FOUND` means the credential pair does not exist in this environment. Sandbox credentials do not work against production and vice versa. The hosted MCP server always talks to **production**.
 - `INVALID_ACCESS_TOKEN` means an expired bearer token was configured directly. Tokens expire after one hour; use Client ID and Secret instead so the server can refresh.
 
 ## Branch: Missing scope or team restriction (403)

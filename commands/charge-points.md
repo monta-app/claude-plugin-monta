@@ -3,7 +3,7 @@ description: List Monta charge points with their current state, optionally filte
 argument-hint: "[site name or ID] [state]"
 ---
 
-List charge points from the Monta Partner API and summarise their state. Read-only.
+List charge points from the Monta API and summarise their state. Read-only.
 
 Arguments: `$ARGUMENTS` (a site name or ID, a team ID, and/or a state such as `available`, `busy-charging`, `error`, or `disconnected`; all optional).
 
