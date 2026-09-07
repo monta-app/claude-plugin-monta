@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "monta",
+  "displayName": "Monta",
+  "version": "0.1.0",
+  "description": "Operate EV charging infrastructure through the Monta Partner API. Connects Claude to Monta's hosted MCP server so you can list sites and charge points, inspect charges and their cost breakdowns, pull charger and utilisation reports, investigate failed or stuck sessions, and manage teams, price groups, and webhooks. Requires Monta Partner API credentials (Client ID and Client Secret) created in Monta Hub. Run /monta:setup after installing.",
+  "author": {
+    "name": "Monta",
+    "url": "https://monta.com"
+  },
+  "homepage": "https://developer.monta.com",
+  "repository": "https://github.com/monta-app/claude-plugin-monta",
+  "license": "Apache-2.0",
+  "keywords": [
+    "monta",
+    "ev-charging",
+    "charge-points",
+    "cpo",
+    "ocpp",
+    "energy",
+    "partner-api",
+    "mcp"
+  ]
+}

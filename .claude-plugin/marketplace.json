@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "monta-plugins",
+  "description": "Monta plugins for Claude Code and Cowork",
+  "owner": {
+    "name": "Monta",
+    "url": "https://monta.com"
+  },
+  "plugins": [
+    {
+      "name": "monta",
+      "source": "./",
+      "description": "Operate EV charging infrastructure through the Monta Partner API.",
+      "category": "productivity",
+      "homepage": "https://developer.monta.com"
+    }
+  ]
+}
