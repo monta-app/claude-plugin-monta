@@ -38,7 +38,7 @@ Workflows for day-to-day operator questions. Tool names, filters, safety rules, 
 2. Pull the money: `get-wallet-transactions` with `teamId`, `fromDate`, `toDate`, `perPage: 100`. Match on `referenceType`/`referenceId` (charge transactions reference the charge) and on amount and currency.
 3. For an invoice, `get-wallet-transactions-invoice` lists the transactions behind it.
 4. Report: matched count and sum, charges with no transaction, transactions with no charge, and amount mismatches. Amounts are in minor units; convert before comparing across sources.
-5. Corrections are `post-operator-adjustment-transaction` (destructive, moves real money). Present the proposed `fromWalletId`, `toWalletId`, `amount`, and `currencyId` and wait for an explicit yes.
+5. Corrections that move money between wallets are not available through the MCP server. Report the discrepancy with wallet IDs, amounts, and currency, and point the user to Monta Hub to post an operator adjustment.
 
 ## Onboard a new site or charge point
 

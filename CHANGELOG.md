@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- The operator wallet adjustment is no longer exposed by the hosted MCP server; skills and the wallet command now point to Monta Hub for corrections.
+
 ## 0.1.3
 
 - Webhooks command quotes the exact event type names.

@@ -63,7 +63,6 @@ States you will see:
 - `reboot-charge-point`, `unlock-charge-point`, `deactivate-charge-point`.
 - `set-charging-profile`, `clear-charging-profile`, `create-ocpp-config`.
 - `freeze-team`, `unfreeze-team`.
-- `post-operator-adjustment-transaction` (moves money between wallets).
 - `block-charge-auth-token`, `unblock-charge-auth-token`.
 - `delete-webhook-config`, `transfer-charge-point-to-team`, `transferTeamOwnership`.
 
