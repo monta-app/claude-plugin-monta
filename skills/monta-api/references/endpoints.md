@@ -86,7 +86,7 @@ Tool names are the Monta API operation IDs. In Claude Code the full name is pref
 | Wallets and balances | `get-wallets`, `get-wallet` | GET /wallets, /wallets/{walletId} | R |
 | Wallet transactions (filters: `teamId`, `fromDate`, `toDate`, `referenceId`, `referenceType`, `state`, `group`) | `get-wallet-transactions`, `get-wallet-transaction` | GET /wallet-transactions | R |
 | Transactions for an invoice | `get-wallet-transactions-invoice` | GET /wallet-transactions/invoices/{invoiceId} | R |
-| Operator adjustment (moves money between wallets) | `post-operator-adjustment-transaction` | POST /wallet-transactions/operator-adjustment-transaction | D |
+| Operator adjustment (moves money between wallets) | not exposed through the MCP server; use Monta Hub | POST /wallet-transactions/operator-adjustment-transaction | n/a |
 
 ## Pricing
 
