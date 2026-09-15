@@ -72,7 +72,7 @@ Tool names are the Monta API operation IDs. In Claude Code the full name is pref
 
 | Task | Tool | Method and path | Safety |
 |---|---|---|---|
-| Charger report: sessions and kWh per charge point for a team (`teamId`, `fromDate`, `toDate` required; `chargePointIds` optional; max 31 days) | `get-insights-charges-charger-report` | GET /insights/charges/charger-report | R |
+| Charger report: sessions and kWh per charge point for a team (`teamId`, `fromDate`, `toDate` required as full ISO 8601 timestamps; `chargePointIds` optional; max 31 days) | `get-insights-charges-charger-report` | GET /insights/charges/charger-report | R |
 | Driver report, driver member cost report, charge auth token report | `get-insights-charges-driver-report`, `get-insights-charges-driver-member-costs-report`, `get-insights-charges-charge-auth-token-report` | GET /insights/charges/... | R |
 | Issue reports submitted by drivers about charge points | `get-reports`, `get-report`, `get-report-reasons` | GET /reports, /reports/{id}, /report/reasons | R |
 | Resolve an issue report | `resolve-report` | POST /reports/{id}/resolve | M |

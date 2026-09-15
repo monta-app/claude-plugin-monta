@@ -39,7 +39,8 @@ Cursor pagination: `get-cdrs` (`cursor`, `limit`, `meta.after`), `search-audit-l
 ## Dates and time
 
 - Filters: UTC ISO 8601 with `Z`, for example `2026-09-01T00:00:00Z`.
-- Statistics and insight endpoints (`get-site-statistics`, `get-charge-point-statistics`, `get-insights-charges-charger-report`, `driver-report`, and so on): `YYYY-MM-DD` in UTC, maximum 31 days between `fromDate` and `toDate`.
+- Statistics endpoints (`get-site-statistics`, `get-charge-point-statistics`): `YYYY-MM-DD` in UTC, maximum 31 days between `fromDate` and `toDate`.
+- Insight reports (`get-insights-charges-charger-report`, `driver-report`, `driver-member-costs-report`, `charge-auth-token-report`): full UTC ISO 8601 timestamps (`2026-09-01T00:00:00Z`) even though the spec labels them as dates; a bare date is rejected with 400. Maximum 31 days.
 - CDRs: `YYYY-MM-DD`, maximum 90 days.
 - Response timestamps are UTC ISO 8601 with fractional seconds. Timezone fields exist only on tariffs and schedules.
 
