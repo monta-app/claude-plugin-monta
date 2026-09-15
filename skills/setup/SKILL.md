@@ -35,7 +35,7 @@ The plugin ships a remote MCP server at `https://partner-api-mcp.monta.app/mcp`.
      claude mcp add --transport http --scope user monta-api https://partner-api-mcp.monta.app/mcp \
        --header "X-Monta-Auth: ${MONTA_CLIENT_ID}:${MONTA_CLIENT_SECRET}"
      ```
-   - **Claude Desktop, Cowork, or claude.ai:** open the plugin's or connector's settings, enter `https://partner-api-mcp.monta.app/mcp` if asked for a URL, and complete the sign-in page with the Client ID and Client Secret.
+   - **Claude Desktop or Cowork:** open **Customize → Plugins → Monta → Connectors** and click **Connect** next to `monta-api`. An "Add custom connector" dialog appears with the settings already detected (Authentication: Sign in now; OAuth client: Register automatically; no request headers). Keep those defaults and confirm at the bottom of the dialog. The browser then shows Monta's sign-in page for the Client ID and Client Secret, followed by a "Connected" page. The Connectors panel can keep saying "Not connected" for a while afterwards; the tools work regardless, so just start a chat. If an older `monta-partner-api` connector is still listed under Customize → Connectors, remove it so tool search does not see two copies of every tool.
 3. Ask the user to say "done", then re-run Step 1. In Claude Code, `/reload-plugins` or `/mcp` refreshes the connection.
 
 ## Branch: Bad or missing credentials (401)

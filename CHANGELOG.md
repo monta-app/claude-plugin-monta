@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3
+
+- Webhooks command quotes the exact event type names.
+- Setup skill describes the Claude Desktop connector dialog and the stale "Not connected" panel.
+
 ## 0.1.2
 
 - New commands: `help`, `teams`, `wallet`, `webhooks`, and `charge-point`.
