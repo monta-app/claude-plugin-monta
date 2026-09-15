@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+- Insight reports need full ISO 8601 timestamps, not bare dates; the charger-report command and references say so.
+
 ## 0.1.4
 
 - The operator wallet adjustment is no longer exposed by the hosted MCP server; skills and the wallet command now point to Monta Hub for corrections.
