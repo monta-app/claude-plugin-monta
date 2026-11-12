@@ -1,0 +1,15 @@
+{
+  "name": "claude-plugin-monta",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-references.mjs",
+    "test": "node --test 'scripts/*.test.mjs'"
+  },
+  "dependencies": {
+    "yaml": "2.9.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

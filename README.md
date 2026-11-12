@@ -80,6 +80,17 @@ Everything else the Monta API offers (members, price groups, tariffs, tokens, ve
 | `monta-api` | Domain model, auth and scopes, pagination, dates, rate limits, and the read-only / mutating / destructive classification of every tool group |
 | `monta-charging-operations` | Operator workflows: failed or stuck charges, offline chargers, site utilisation, charge-to-wallet reconciliation, onboarding a site or charge point |
 
+## References are generated
+
+The Monta API references the `monta-api` skill reads are generated from the public OpenAPI specs (`https://partner-api.monta.com/swagger/monta-partner-api-v1.yml` and `-v2.yml`) by `scripts/generate-references.mjs`:
+
+- `skills/monta-api/references/endpoints.md`: index of the v1 tags, each linking `endpoints/v1/<tag>.md` with the operations, MCP tool names, safety classes, and docs links
+- `skills/monta-api/references/endpoints-v2.md`: the same for v2 (`endpoints/v2/<tag>.md`), which is HTTP only (the hosted MCP server serves v1)
+- `skills/monta-api/references/deprecated.md`: deprecated operations with the spec's deprecation note
+- `skills/monta-api/references/schemas.md`: component schemas with their required fields
+
+Do not edit them by hand. Run `npm ci` once, then `npm run generate` to regenerate them and `npm test` to test the generator. After each Monta API production deploy they are regenerated automatically and land as a pull request that a human reviews before merging. `skills/monta-api/references/conventions.md` stays hand-written.
+
 ## Example prompts
 
 > "Which of our chargers are offline right now, and since when?"
