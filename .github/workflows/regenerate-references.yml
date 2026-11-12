@@ -1,0 +1,71 @@
+name: Regenerate references
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: regenerate-references
+
+jobs:
+  regenerate:
+    name: regenerate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - name: Generate the references from the Monta API spec
+        run: npm run generate
+      - name: Detect changes
+        id: changes
+        run: |
+          if [ -z "$(git status --porcelain skills/)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "The references already match the Monta API spec, no PR to open." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check a sample of docs links
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          for url in $(grep -rohE 'https://developer\.monta\.com/[^)[:space:]]+' skills/monta-api/references | sort -u | shuf -n 5); do
+            curl -fsSIL --retry 3 -o /dev/null -w "%{http_code} $url\n" "$url"
+          done
+      - name: Bump the plugin version and add a changelog entry
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          node -e '
+            const fs = require("fs");
+            const manifestFile = ".claude-plugin/plugin.json";
+            const manifest = JSON.parse(fs.readFileSync(manifestFile, "utf8"));
+            const [major, minor, patch] = manifest.version.split(".").map(Number);
+            manifest.version = `${major}.${minor}.${patch + 1}`;
+            fs.writeFileSync(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`);
+            const changelog = fs.readFileSync("CHANGELOG.md", "utf8");
+            const entry = `## ${manifest.version}\n\n- Regenerate the Monta API references from the latest OpenAPI spec.\n\n`;
+            fs.writeFileSync("CHANGELOG.md", changelog.replace("# Changelog\n\n", `# Changelog\n\n${entry}`));
+          '
+      - name: Open or update the references PR
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
+        with:
+          token: ${{ secrets.MONTA_BOT_TOKEN }}
+          branch: bot/regenerate-references
+          delete-branch: true
+          add-paths: |
+            skills/monta-api/references
+            .claude-plugin/plugin.json
+            CHANGELOG.md
+          commit-message: Regenerate the Monta API references from the OpenAPI spec
+          title: Regenerate the Monta API references from the OpenAPI spec
+          body: |
+            The endpoint, deprecation and schema references were regenerated from the public Monta API OpenAPI specs (v1 and v2) after a spec change.
+
+            A human needs to review this before merging: check that new or changed operations have the right safety class (`scripts/safety.mjs` lists the destructive operations that are not DELETE requests) and that the deprecation notes still name the right replacements.
