@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- The `monta-api` references are generated from the Monta API OpenAPI spec: one file per tag for v1 (with MCP tool names and safety classes) and v2 (HTTP only), deprecated operations with their replacements, and schemas. They are regenerated after every Monta API release.
+
 ## 0.1.5
 
 - Insight reports need full ISO 8601 timestamps, not bare dates; the charger-report command and references say so.

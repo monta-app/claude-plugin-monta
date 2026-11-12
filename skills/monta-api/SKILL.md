@@ -9,7 +9,14 @@ Monta is a platform for operating EV charging infrastructure. The MCP server exp
 
 Tools are often deferred because there are several hundred of them: when a tool such as `get-sites` is not in your visible list, search for it by operation ID and load it. Only conclude a tool is unavailable after searching, and then check the credential's scopes with `get-current-consumer`.
 
-Read `references/endpoints.md` for the task-to-endpoint map and the full safety classification. Read `references/conventions.md` for auth, pagination, dates, errors, and webhooks in detail.
+The references are generated from the Monta API OpenAPI spec:
+
+- `references/endpoints.md`: the v1 tags, each linking a file under `references/endpoints/v1/` with every operation's tool name, method and path, query filters, safety class, and docs link. Open the tag you need instead of guessing a tool.
+- `references/endpoints-v2.md`: the v2 endpoints, HTTP only (no MCP tools), with the `Monta-Version: v2` header.
+- `references/deprecated.md`: deprecated operations and what replaces them. Never call a deprecated operation; use its replacement.
+- `references/schemas.md`: request and response models with their required fields.
+
+Read `references/conventions.md` for auth, pagination, dates, errors, and webhooks in detail.
 
 ## Domain model
 
@@ -58,6 +65,7 @@ States you will see:
 
 **Destructive** tools always need explicit confirmation with the concrete target restated in plain words, for example "Reboot charge point 4821 (Serial ABC123 at Site Nørreport)?" and a "yes" from the user before the call:
 
+- Any operation marked **D** in the endpoint files.
 - Any `delete-*` tool.
 - `stop-charge` and `restart-charge` (note: these are GET requests in the API but they change state; treat them as destructive).
 - `reboot-charge-point`, `unlock-charge-point`, `deactivate-charge-point`.
