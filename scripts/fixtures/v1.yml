@@ -1,0 +1,56 @@
+openapi: 3.0.1
+paths:
+  /api/v1/teams:
+    get:
+      tags: [Teams]
+      summary: Retrieve teams
+      operationId: get-teams
+      parameters:
+        - name: operatorId
+          in: query
+        - name: Monta-Version
+          in: header
+        - name: page
+          in: query
+  /api/v1/teams/{id}/freeze:
+    post:
+      tags: [Teams]
+      summary: Freeze a team
+      operationId: freeze-team
+      parameters:
+        - name: id
+          in: path
+  /api/v1/auth/me:
+    get:
+      tags: [Authentication]
+      summary: Obtain information about current API Consumer
+      operationId: get-auth-information
+      deprecated: true
+      description: "Deprecated, will be removed soon, use `/api/v1/consumers/me` instead."
+  /api/v1/consumers/me:
+    get:
+      tags: [Consumers]
+      summary: Obtain information about current API Consumer
+      operationId: get-current-consumer
+  /api/v1/reports/{reportId}/resolve:
+    post:
+      tags: [Reports]
+      summary: Resolve a report
+      operationId: resolve-report
+      deprecated: true
+      description: "For alerts use `/alerts`.<br/><br/>Required scope: `reports:write`"
+  /api/v1/charge-points/{chargePointId}/logs:
+    get:
+      tags: [Charge Points]
+      summary: Charge point logs | OCPP messages
+      operationId: get-charge-point-logs
+  /api/v1/ping:
+    get:
+      summary: Ping
+components:
+  schemas:
+    Team:
+      description: "A team owns charge points. Teams can be frozen.</br>Frozen teams cannot charge."
+      required: [id, name]
+    Ping:
+      type: object
