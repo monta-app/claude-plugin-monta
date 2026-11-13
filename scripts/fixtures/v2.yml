@@ -1,0 +1,18 @@
+openapi: 3.0.1
+paths:
+  /api/v1/teams:
+    get:
+      tags: [Teams]
+      summary: Search teams
+      operationId: get-teams-v2
+  /api/v1/afir/charge-points:
+    get:
+      tags: [AFIR Charge Points]
+      summary: Retrieve AFIR charge points
+      operationId: get-afir-charge-points
+      deprecated: true
+      description: "**Deprecated.** Use the AFIR charge points endpoint of the [Public API](https://developer.monta.com/docs/public-api) instead.</br></br>Required scope: None"
+components:
+  schemas:
+    Team:
+      required: [id]
