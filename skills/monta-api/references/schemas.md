@@ -85,7 +85,7 @@ Component schemas of the Monta API spec: the first sentence of each description 
 | ChargePointIntegrationType | definitions: |  |
 | ChargePointLog |  | id, message, timestamp |
 | ChargePointLogResult.CursorPage |  | data, meta |
-| ChargePointLogResult.CursorPage.CursorPageMeta |  | paginationType, perPage |
+| ChargePointLogResult.CursorPage.CursorPageMeta |  | hasMore, paginationType, perPage |
 | ChargePointLogResult.OffsetPage |  | data, meta |
 | ChargePointLogResult.OffsetPage.OffsetPageMeta |  | currentPage, itemCount, paginationType, perPage, totalItemCount, totalPageCount |
 | ChargePointModel |  | brand, features, identifier, name |
@@ -699,7 +699,7 @@ Component schemas of the Monta API spec: the first sentence of each description 
 | ChargePointIntegration_v2 |  | chargePointIdentity, createdAt, integrationTypeIdentifier, serialNumber, state |
 | ChargePointLog |  | id, message, timestamp |
 | ChargePointLogResult.CursorPage |  | data, meta |
-| ChargePointLogResult.CursorPage.CursorPageMeta |  | paginationType, perPage |
+| ChargePointLogResult.CursorPage.CursorPageMeta |  | hasMore, paginationType, perPage |
 | ChargePointLogResult.OffsetPage |  | data, meta |
 | ChargePointLogResult.OffsetPage.OffsetPageMeta |  | currentPage, itemCount, paginationType, perPage, totalItemCount, totalPageCount |
 | ChargePointModel |  | brand, features, identifier, name |
