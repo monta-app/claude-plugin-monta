@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- The token exchange operations (`get-access-token-with-client-credentials` and `get-access-token-with-refresh-token`) are marked read-only in the references, so they need no confirmation.
+- The `monta-plugins` marketplace also lists the new `monta-public-api` plugin, for building against the Monta Public API over HTTP.
+
 ## 0.2.0
 
 - The `monta-api` references are generated from the Monta API OpenAPI spec: one file per tag for v1 (with MCP tool names and safety classes) and v2 (HTTP only), deprecated operations with their replacements, and schemas. They are regenerated after every Monta API release.
