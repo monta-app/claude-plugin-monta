@@ -13,3 +13,16 @@ test("a destructive override wins over the HTTP method", () => {
 
   assert.deepEqual(overriddenSafety, ["D", "D"]);
 });
+
+test("token exchange operations are read-only", () => {
+  const tokenExchangeSafety = [
+    operationSafety("post", "get-access-token-with-client-credentials"),
+    operationSafety("post", "get-access-token-with-refresh-token"),
+  ];
+
+  assert.deepEqual(tokenExchangeSafety, ["R", "R"]);
+});
+
+test("starting a charge is mutating", () => {
+  assert.equal(operationSafety("post", "start-charge"), "M");
+});

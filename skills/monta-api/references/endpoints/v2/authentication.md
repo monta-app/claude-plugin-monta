@@ -6,5 +6,5 @@ HTTP only with the `Monta-Version: v2` header, none of these is an MCP tool, see
 
 | Operation ID | Method and path | Summary | Query filters | Safety | Docs |
 |---|---|---|---|---|---|
-| get-access-token-with-refresh-token | POST /api/v1/auth/refresh | Obtain your `accessToken` with a `refreshToken` |  | M | [docs](https://developer.monta.com/api/v2/obtain-your-accesstoken-with-a-refreshtoken) |
-| get-access-token-with-client-credentials | POST /api/v1/auth/token | Obtain your `accessToken` |  | M | [docs](https://developer.monta.com/api/v2/obtain-your-accesstoken) |
+| get-access-token-with-refresh-token | POST /api/v1/auth/refresh | Obtain your `accessToken` with a `refreshToken` |  | R | [docs](https://developer.monta.com/api/v2/obtain-your-accesstoken-with-a-refreshtoken) |
+| get-access-token-with-client-credentials | POST /api/v1/auth/token | Obtain your `accessToken` |  | R | [docs](https://developer.monta.com/api/v2/obtain-your-accesstoken) |

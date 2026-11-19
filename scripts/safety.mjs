@@ -23,6 +23,9 @@ const DESTRUCTIVE_OPERATION_IDS = [
   "unlock-charge-point",
 ];
 
+// Token exchanges are POSTs that change no data
+const READ_ONLY_OPERATION_IDS = ["get-access-token-with-client-credentials", "get-access-token-with-refresh-token"];
+
 const SAFETY_BY_METHOD = {
   get: "R",
   head: "R",
@@ -37,6 +40,9 @@ const SAFETY_BY_METHOD = {
 export const operationSafety = (method, operationId) => {
   if (DESTRUCTIVE_OPERATION_IDS.includes(operationId)) {
     return "D";
+  }
+  if (READ_ONLY_OPERATION_IDS.includes(operationId)) {
+    return "R";
   }
   return SAFETY_BY_METHOD[method];
 };
