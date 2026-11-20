@@ -1,0 +1,51 @@
+openapi: 3.0.1
+paths:
+  /api/v1/auth/me:
+    get:
+      tags: [Authentication]
+      summary: Obtain information about current application
+      operationId: get-auth-information
+  /api/v1/auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Obtain your `accessToken` with a `refreshToken`
+      operationId: get-access-token-with-refresh-token
+  /api/v1/auth/token:
+    post:
+      tags: [Authentication]
+      summary: Obtain your `accessToken`
+      operationId: get-access-token-with-client-credentials
+  /api/v1/charges:
+    get:
+      tags: [Charges]
+      summary: Retrieve a list of charges.
+      operationId: get-charges
+      parameters:
+        - name: state
+          in: query
+        - name: page
+          in: query
+    post:
+      tags: [Charges]
+      summary: Start a charge.
+      operationId: start-charge
+  /api/v1/charges/{chargeId}/stop:
+    post:
+      tags: [Charges]
+      summary: Stop a charge.
+      operationId: stop-charge
+      parameters:
+        - name: chargeId
+          in: path
+  /api/v1/wallets/personal:
+    get:
+      tags: [Wallets]
+      summary: Retrieve the wallet of your personal team.
+      operationId: get-personal-wallet
+      deprecated: true
+      description: "Deprecated, use `/api/v1/wallet-transactions` instead.</br></br>Required scope: `wallet-transactions`"
+components:
+  schemas:
+    Charge:
+      description: "A charge on a charge point."
+      required: [createdAt, state]

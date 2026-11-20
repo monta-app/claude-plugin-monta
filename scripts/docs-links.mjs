@@ -1,8 +1,11 @@
-const DOCS_ORIGIN = "https://developer.monta.com";
+export const partnerDocsBase = (version) => `https://developer.monta.com/api/${version}`;
+
+// The Public API has one version, so its docs pages have no version segment
+export const PUBLIC_DOCS_BASE = "https://docs.public-api.monta.com/api";
 
 export const METHODS = ["get", "put", "post", "patch", "delete", "options", "head", "trace"];
 
-// Same slugs as Zudoku (zudoku/src/lib/util/slugify.ts), which builds the developer.monta.com page paths
+// Same slugs as Zudoku (zudoku/src/lib/util/slugify.ts), which builds the page paths of both docs sites
 export const slugify = (text) =>
   text
     .normalize("NFKD")
@@ -23,13 +26,13 @@ export const slugifyWithCounter = () => {
 };
 
 // Every operation has its own docs page slugged from its summary; repeats get -2, -3 in spec order, deprecated ones included
-export const specOperations = (spec, version) => {
+export const specOperations = (spec, docsBase) => {
   const pageSlug = slugifyWithCounter();
   return Object.entries(spec.paths ?? {}).flatMap(([path, pathItem]) =>
     METHODS.filter((method) => pathItem[method] !== undefined).map((method) => {
       const operation = pathItem[method];
       const pageTitle = operation.summary || operation.operationId || `${method}-${path}`;
-      return { method, path, operation, docsUrl: `${DOCS_ORIGIN}/api/${version}/${pageSlug(pageTitle)}` };
+      return { method, path, operation, docsUrl: `${docsBase}/${pageSlug(pageTitle)}` };
     }),
   );
 };

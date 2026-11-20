@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "monta-public-api",
+  "displayName": "Monta Public API",
+  "version": "0.1.0",
+  "description": "Build against the Monta Public API with Claude. Teaches Claude the HTTP API at public-api.monta.com: token exchange and refresh, the rate limit of 10 requests per 60 seconds, charging stations, starting and stopping charges, charge states, wallet transactions, and AFIR and open data, with references generated from the OpenAPI spec. Requires the client ID and client secret of an application you create in Monta Hub; Claude never asks you to paste them into the chat.",
+  "author": {
+    "name": "Monta",
+    "url": "https://monta.com"
+  },
+  "homepage": "https://docs.public-api.monta.com",
+  "repository": "https://github.com/monta-app/claude-plugin-monta",
+  "license": "MIT",
+  "keywords": [
+    "monta",
+    "ev-charging",
+    "charging-stations",
+    "monta-public-api",
+    "openapi"
+  ]
+}

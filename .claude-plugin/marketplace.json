@@ -13,6 +13,13 @@
       "description": "Operate EV charging infrastructure through the Monta API.",
       "category": "productivity",
       "homepage": "https://developer.monta.com"
+    },
+    {
+      "name": "monta-public-api",
+      "source": "./plugins/monta-public-api",
+      "description": "Build against the Monta Public API over HTTP.",
+      "category": "development",
+      "homepage": "https://docs.public-api.monta.com"
     }
   ]
 }

@@ -8,6 +8,8 @@ The plugin bundles:
 - Skills that teach Claude the Monta domain model, API conventions, and operator workflows.
 - Slash commands for the most common first tasks.
 
+The same marketplace also ships [`monta-public-api`](#monta-public-api-plugin), a separate plugin for the Monta Public API.
+
 ## Prerequisites
 
 - A Monta API credential (Client ID and Client Secret). Create one in [Monta Hub](https://hub.monta.app) under **Account settings → Integrations → API** (or **Applications → Create app → Custom**). See [Access and set up API keys in Monta Hub](https://monta.com/help/en_US/monta-hub-account-settings/access-and-set-up-api-keys-in-monta-hub). Monta API access requires an agreement with Monta; see [Getting started](https://developer.monta.com/docs/getting-started).
@@ -80,16 +82,39 @@ Everything else the Monta API offers (members, price groups, tariffs, tokens, ve
 | `monta-api` | Domain model, auth and scopes, pagination, dates, rate limits, and the read-only / mutating / destructive classification of every tool group |
 | `monta-charging-operations` | Operator workflows: failed or stuck charges, offline chargers, site utilisation, charge-to-wallet reconciliation, onboarding a site or charge point |
 
+## Monta Public API plugin
+
+`monta-public-api` teaches Claude the [Monta Public API](https://docs.public-api.monta.com) (`https://public-api.monta.com/api/v1`), so it can write and run code against it: charging stations, starting and stopping charges, charges and their kWh consumption, wallet transactions, and AFIR and open data locations.
+
+It contains one skill, `monta-public-api`, with generated references, and nothing else: no MCP server and no commands. Claude calls the API over HTTP with the client ID and client secret of an application you create in [Monta Hub](https://hub.monta.app/profile/applications), exchanged for an access token and refresh token. The skill never asks you to paste them into the chat.
+
+Install it from this repository as a marketplace:
+
+```
+/plugin marketplace add monta-app/claude-plugin-monta
+/plugin install monta-public-api@monta-plugins
+```
+
+To update it later, run this in your own terminal:
+
+```
+claude plugin update monta-public-api@monta-plugins
+```
+
 ## References are generated
 
-The Monta API references the `monta-api` skill reads are generated from the public OpenAPI specs (`https://partner-api.monta.com/swagger/monta-partner-api-v1.yml` and `-v2.yml`) by `scripts/generate-references.mjs`:
+`scripts/generate-references.mjs` generates the references the `monta-api` and `monta-public-api` skills read from the public OpenAPI specs.
+
+The `monta-api` skill's references come from the Monta API specs (`https://partner-api.monta.com/swagger/monta-partner-api-v1.yml` and `-v2.yml`):
 
 - `skills/monta-api/references/endpoints.md`: index of the v1 tags, each linking `endpoints/v1/<tag>.md` with the operations, MCP tool names, safety classes, and docs links
 - `skills/monta-api/references/endpoints-v2.md`: the same for v2 (`endpoints/v2/<tag>.md`), which is HTTP only (the hosted MCP server serves v1)
 - `skills/monta-api/references/deprecated.md`: deprecated operations with the spec's deprecation note
 - `skills/monta-api/references/schemas.md`: component schemas with their required fields
 
-Do not edit them by hand. Run `npm ci` once, then `npm run generate` to regenerate them and `npm test` to test the generator. After each Monta API production deploy they are regenerated automatically and land as a pull request that a human reviews before merging. `skills/monta-api/references/conventions.md` stays hand-written.
+The `monta-public-api` skill's references come from the Monta Public API spec (`https://public-api.monta.com/swagger/monta-public-api-2023-09-14.yml`), in `plugins/monta-public-api/skills/monta-public-api/references/`: `endpoints.md` indexes the tags, each linking `endpoints/<tag>.md` with the operations, safety classes, and docs links, next to `deprecated.md` and `schemas.md`. All of it is HTTP only.
+
+Do not edit them by hand. Run `npm ci` once, then `npm run generate` to regenerate both and `npm test` to test the generator. After each Monta API or Monta Public API production deploy they are regenerated automatically and land as one pull request that a human reviews before merging; each plugin whose references changed gets a patch version bump and a changelog entry. `skills/monta-api/references/conventions.md` stays hand-written.
 
 ## Example prompts
 
@@ -112,10 +137,12 @@ Do not edit them by hand. Run `npm ci` once, then `npm run generate` to regenera
 - **Reads run freely; writes are confirmed.** The skills instruct Claude to confirm every mutating call and to restate the exact target before destructive ones (delete anything, stop or restart a charge, reboot or unlock a charge point, write OCPP configuration or charging profiles, freeze a team, post a wallet adjustment).
 - **Scopes limit blast radius.** The MCP server only exposes tools your credential can call. Prefer a read-only credential unless you need writes.
 - **Rate limits.** Default 1000 requests per 600 seconds per credential. Claude uses filters and large page sizes to stay within it.
+- **The Monta Public API has no sandbox either.** The `monta-public-api` skill starts with reads and confirms before every start or stop of a charge.
 
 ## Documentation and support
 
 - [Monta API documentation](https://developer.monta.com)
+- [Monta Public API documentation](https://docs.public-api.monta.com)
 - [Hosted MCP server documentation](https://partner-api-mcp.monta.app/docs)
 - [Monta Hub](https://hub.monta.app)
 - Monta API support: partners@monta.com or the [contact form](https://www.monta.com/uk/contact)

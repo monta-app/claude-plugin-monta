@@ -27,11 +27,13 @@ jobs:
           mv .claude-plugin/marketplace.json /tmp/marketplace.json
           claude plugin validate . --strict
           mv /tmp/marketplace.json .claude-plugin/marketplace.json
+      - name: Validate the monta-public-api plugin (strict)
+        run: claude plugin validate plugins/monta-public-api --strict
       - name: Validate marketplace manifest (strict)
         run: claude plugin validate . --strict
       - name: Check JSON files parse
         run: |
-          for f in .mcp.json .claude-plugin/plugin.json .claude-plugin/marketplace.json; do
+          for f in .mcp.json .claude-plugin/plugin.json .claude-plugin/marketplace.json plugins/monta-public-api/.claude-plugin/plugin.json; do
             node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" && echo "ok $f"
           done
       - name: Refuse credentials in the MCP config

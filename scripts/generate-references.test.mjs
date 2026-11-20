@@ -4,13 +4,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, test } from "node:test";
 import { parse } from "yaml";
-import { renderReferences, writeReferences } from "./generate-references.mjs";
+import { PARTNER_REFERENCES, PUBLIC_REFERENCES, renderReferences, writeReferences } from "./generate-references.mjs";
 
 const fixtureSpec = (fileName) => parse(readFileSync(new URL(`./fixtures/${fileName}`, import.meta.url), "utf8"));
 
-const specs = { v1Spec: fixtureSpec("v1.yml"), v2Spec: fixtureSpec("v2.yml") };
+const partnerSpecs = [fixtureSpec("v1.yml"), fixtureSpec("v2.yml")];
 
-const references = renderReferences(specs);
+const references = renderReferences(PARTNER_REFERENCES, partnerSpecs);
+
+const publicReferences = renderReferences(PUBLIC_REFERENCES, [fixtureSpec("public.yml")]);
+
+const linkTargets = (content) => [...content.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map(([, url]) => url);
 
 const lineContaining = (fileName, text) => references[fileName].split("\n").find((line) => line.includes(text));
 
@@ -62,7 +66,7 @@ test("tags that slug to the same file name get numbered files", () => {
     },
   };
 
-  const tagFiles = Object.keys(renderReferences({ v1Spec, v2Spec: {} })).filter((fileName) => fileName.startsWith("endpoints/v1/"));
+  const tagFiles = Object.keys(renderReferences(PARTNER_REFERENCES, [v1Spec, {}])).filter((fileName) => fileName.startsWith("endpoints/v1/"));
 
   assert.deepEqual(tagFiles, ["endpoints/v1/charge-points.md", "endpoints/v1/charge-points-2.md"]);
 });
@@ -119,15 +123,59 @@ test("schemas without a description or required fields are left out", () => {
   assert.doesNotMatch(references["schemas.md"], /\| Ping \|/);
 });
 
-test("every absolute link in the generated files points to developer.monta.com", () => {
-  const urls = Object.values(references).flatMap((content) => [...content.matchAll(/https?:\/\/[^\s)|]+/g)].map(([url]) => url));
-  const hosts = new Set(urls.map((url) => new URL(url).host));
+test("every absolute link in the generated files points to the docs site of its API", () => {
+  const linkedHosts = (apiReferences) => [...new Set(Object.values(apiReferences).flatMap(linkTargets).map((url) => new URL(url).host))];
 
-  assert.deepEqual([...hosts], ["developer.monta.com"]);
+  assert.deepEqual(linkedHosts(references), ["developer.monta.com"]);
+  assert.deepEqual(linkedHosts(publicReferences), ["docs.public-api.monta.com"]);
+});
+
+test("the public references link every operation to docs.public-api.monta.com/api/<slug>", () => {
+  const docsLinks = Object.values(publicReferences).flatMap((content) => [...content.matchAll(/\[docs\]\(([^)]+)\)/g)].map(([, url]) => url));
+
+  assert.deepEqual(docsLinks.toSorted(), [
+    "https://docs.public-api.monta.com/api/obtain-information-about-current-application",
+    "https://docs.public-api.monta.com/api/obtain-your-accesstoken",
+    "https://docs.public-api.monta.com/api/obtain-your-accesstoken-with-a-refreshtoken",
+    "https://docs.public-api.monta.com/api/retrieve-a-list-of-charges",
+    "https://docs.public-api.monta.com/api/retrieve-the-wallet-of-your-personal-team",
+    "https://docs.public-api.monta.com/api/start-a-charge",
+    "https://docs.public-api.monta.com/api/stop-a-charge",
+  ]);
+});
+
+test("the public endpoint files say they are HTTP only with no MCP tools", () => {
+  assert.match(publicReferences["endpoints.md"], /^# Monta Public API endpoints \(HTTP only\)$/m);
+  assert.match(publicReferences["endpoints.md"], /The Public API has no MCP server, so none of these operations is an MCP tool/);
+  assert.match(publicReferences["endpoints/charges.md"], /HTTP only, none of these is an MCP tool/);
+});
+
+test("the public references keep the tag files and sections free of a version", () => {
+  const tagFiles = Object.keys(publicReferences).filter((fileName) => fileName.startsWith("endpoints/"));
+
+  assert.deepEqual(tagFiles, ["endpoints/authentication.md", "endpoints/charges.md"]);
+  assert.match(publicReferences["endpoints/charges.md"], /^# Charges$/m);
+  assert.doesNotMatch(publicReferences["schemas.md"], /^## /m);
+});
+
+test("stop-charge is destructive in the public references", () => {
+  const row = publicReferences["endpoints/charges.md"].split("\n").find((line) => line.includes("stop-charge"));
+
+  assert.equal(row, "| stop-charge | POST /api/v1/charges/{chargeId}/stop | Stop a charge. |  | D | [docs](https://docs.public-api.monta.com/api/stop-a-charge) |");
+});
+
+test("a deprecated public operation is listed in deprecated.md and left out of the endpoint files", () => {
+  const endpointFilesWithDeprecated = Object.entries(publicReferences).filter(
+    ([fileName, content]) => fileName.startsWith("endpoints") && content.includes("get-personal-wallet"),
+  );
+
+  assert.deepEqual(endpointFilesWithDeprecated, []);
+  assert.match(publicReferences["deprecated.md"], /\| get-personal-wallet \| GET \/api\/v1\/wallets\/personal \| Deprecated, use `\/api\/v1\/wallet-transactions` instead\. \|/);
 });
 
 test("rendering the same specs twice gives identical output", () => {
-  assert.deepEqual(renderReferences(specs), references);
+  assert.deepEqual(renderReferences(PARTNER_REFERENCES, partnerSpecs), references);
+  assert.deepEqual(renderReferences(PUBLIC_REFERENCES, [fixtureSpec("public.yml")]), publicReferences);
 });
 
 test("writing the references removes tag files of tags no longer in the spec", () => {
