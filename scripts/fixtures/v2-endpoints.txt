@@ -1,0 +1,2 @@
+GET /api/v1/teams | Search teams | https://developer.monta.com/api/v2/teams
+GET /api/v1/afir/charge-points | Retrieve AFIR charge points | https://developer.monta.com/api/v2/afir/charge-points

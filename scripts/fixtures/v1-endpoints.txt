@@ -1,0 +1,7 @@
+GET /api/v1/teams | Retrieve teams | https://developer.monta.com/api/v1/teams
+POST /api/v1/teams/{id}/freeze | Freeze a team | https://developer.monta.com/api/v1/teams/id/freeze
+GET /api/v1/auth/me | Obtain information about current API Consumer | https://developer.monta.com/api/v1/auth/me
+GET /api/v1/consumers/me | Obtain information about current API Consumer | https://developer.monta.com/api/v1/consumers/me
+POST /api/v1/reports/{reportId}/resolve | Resolve a report | https://developer.monta.com/api/v1/reports/reportId/resolve
+GET /api/v1/charge-points/{chargePointId}/logs | Charge point logs | OCPP messages | https://developer.monta.com/api/v1/charge-points/chargePointId/logs
+GET /api/v1/ping | Ping | https://developer.monta.com/api/v1/ping

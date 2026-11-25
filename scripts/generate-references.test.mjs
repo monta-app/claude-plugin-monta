@@ -4,15 +4,24 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, test } from "node:test";
 import { parse } from "yaml";
+import { parseDocsIndex } from "./docs-links.mjs";
 import { PARTNER_REFERENCES, PUBLIC_REFERENCES, renderReferences, writeReferences } from "./generate-references.mjs";
 
-const fixtureSpec = (fileName) => parse(readFileSync(new URL(`./fixtures/${fileName}`, import.meta.url), "utf8"));
+const fixtureText = (fileName) => readFileSync(new URL(`./fixtures/${fileName}`, import.meta.url), "utf8");
+
+const fixtureSpec = (fileName) => parse(fixtureText(fileName));
+
+const fixtureDocsIndex = (fileName) => parseDocsIndex(fixtureText(fileName));
 
 const partnerSpecs = [fixtureSpec("v1.yml"), fixtureSpec("v2.yml")];
 
-const references = renderReferences(PARTNER_REFERENCES, partnerSpecs);
+const partnerDocsIndexes = [fixtureDocsIndex("v1-endpoints.txt"), fixtureDocsIndex("v2-endpoints.txt")];
 
-const publicReferences = renderReferences(PUBLIC_REFERENCES, [fixtureSpec("public.yml")]);
+const publicDocsIndexes = [fixtureDocsIndex("public-endpoints.txt")];
+
+const references = renderReferences(PARTNER_REFERENCES, partnerSpecs, partnerDocsIndexes);
+
+const publicReferences = renderReferences(PUBLIC_REFERENCES, [fixtureSpec("public.yml")], publicDocsIndexes);
 
 const linkTargets = (content) => [...content.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map(([, url]) => url);
 
@@ -49,7 +58,16 @@ test("the endpoints index lists each tag in alphabetical order with its operatio
 test("an endpoint row lists tool, method and path, summary, query filters, safety and docs link", () => {
   const row = lineContaining("endpoints/v1/teams.md", "get-teams");
 
-  assert.equal(row, "| get-teams | GET /api/v1/teams | Retrieve teams | operatorId, page | R | [docs](https://developer.monta.com/api/v1/retrieve-teams) |");
+  assert.equal(row, "| get-teams | GET /api/v1/teams | Retrieve teams | operatorId, page | R | [docs](https://developer.monta.com/api/v1/teams) |");
+});
+
+test("an operation the docs index does not list yet has an empty docs cell", () => {
+  const v1DocsIndex = parseDocsIndex(fixtureText("v1-endpoints.txt").replace(/^GET \/api\/v1\/teams .*$/m, ""));
+
+  const teamsFile = renderReferences(PARTNER_REFERENCES, partnerSpecs, [v1DocsIndex, partnerDocsIndexes[1]])["endpoints/v1/teams.md"];
+  const row = teamsFile.split("\n").find((line) => line.includes("get-teams"));
+
+  assert.equal(row, "| get-teams | GET /api/v1/teams | Retrieve teams | operatorId, page | R |  |");
 });
 
 test("an operation without an operation id shows (none) as its tool", () => {
@@ -65,8 +83,9 @@ test("tags that slug to the same file name get numbered files", () => {
       "/b": { get: { tags: ["Charge-Points"], operationId: "get-b" } },
     },
   };
+  const v1DocsIndex = parseDocsIndex("GET /a | A | https://developer.monta.com/api/v1/a\nGET /b | B | https://developer.monta.com/api/v1/b");
 
-  const tagFiles = Object.keys(renderReferences(PARTNER_REFERENCES, [v1Spec, {}])).filter((fileName) => fileName.startsWith("endpoints/v1/"));
+  const tagFiles = Object.keys(renderReferences(PARTNER_REFERENCES, [v1Spec, {}], [v1DocsIndex, new Map()])).filter((fileName) => fileName.startsWith("endpoints/v1/"));
 
   assert.deepEqual(tagFiles, ["endpoints/v1/charge-points.md", "endpoints/v1/charge-points-2.md"]);
 });
@@ -94,7 +113,7 @@ test("a deprecated operation quotes the paragraph of its description that mentio
 
   assert.equal(
     row,
-    "| get-afir-charge-points | GET /api/v1/afir/charge-points | **Deprecated.** Use the AFIR charge points endpoint of the [Public API](https://developer.monta.com/docs/public-api) instead. | [docs](https://developer.monta.com/api/v2/retrieve-afir-charge-points) |",
+    "| get-afir-charge-points | GET /api/v1/afir/charge-points | **Deprecated.** Use the AFIR charge points endpoint of the [Public API](https://developer.monta.com/docs/public-api) instead. | [docs](https://developer.monta.com/api/v2/afir/charge-points) |",
   );
 });
 
@@ -103,14 +122,8 @@ test("a deprecated operation quotes its whole description when no paragraph ment
 
   assert.equal(
     row,
-    "| resolve-report | POST /api/v1/reports/{reportId}/resolve | For alerts use `/alerts`.<br/><br/>Required scope: `reports:write` | [docs](https://developer.monta.com/api/v1/resolve-a-report) |",
+    "| resolve-report | POST /api/v1/reports/{reportId}/resolve | For alerts use `/alerts`.<br/><br/>Required scope: `reports:write` | [docs](https://developer.monta.com/api/v1/reports/reportId/resolve) |",
   );
-});
-
-test("a deprecated operation keeps its docs page number among operations with the same summary", () => {
-  const row = lineContaining("endpoints/v1/consumers.md", "get-current-consumer");
-
-  assert.match(row, /\[docs\]\(https:\/\/developer\.monta\.com\/api\/v1\/obtain-information-about-current-api-consumer-2\)/);
 });
 
 test("a schema row lists the first sentence of its description and its required fields", () => {
@@ -130,17 +143,17 @@ test("every absolute link in the generated files points to the docs site of its 
   assert.deepEqual(linkedHosts(publicReferences), ["docs.public-api.monta.com"]);
 });
 
-test("the public references link every operation to docs.public-api.monta.com/api/<slug>", () => {
+test("the public references link every operation to its docs.public-api.monta.com page", () => {
   const docsLinks = Object.values(publicReferences).flatMap((content) => [...content.matchAll(/\[docs\]\(([^)]+)\)/g)].map(([, url]) => url));
 
   assert.deepEqual(docsLinks.toSorted(), [
-    "https://docs.public-api.monta.com/api/obtain-information-about-current-application",
-    "https://docs.public-api.monta.com/api/obtain-your-accesstoken",
-    "https://docs.public-api.monta.com/api/obtain-your-accesstoken-with-a-refreshtoken",
-    "https://docs.public-api.monta.com/api/retrieve-a-list-of-charges",
-    "https://docs.public-api.monta.com/api/retrieve-the-wallet-of-your-personal-team",
-    "https://docs.public-api.monta.com/api/start-a-charge",
-    "https://docs.public-api.monta.com/api/stop-a-charge",
+    "https://docs.public-api.monta.com/api/v1/auth/me",
+    "https://docs.public-api.monta.com/api/v1/auth/refresh",
+    "https://docs.public-api.monta.com/api/v1/auth/token",
+    "https://docs.public-api.monta.com/api/v1/charges/chargeId/stop",
+    "https://docs.public-api.monta.com/api/v1/charges/get",
+    "https://docs.public-api.monta.com/api/v1/charges/post",
+    "https://docs.public-api.monta.com/api/v1/wallets/personal",
   ]);
 });
 
@@ -161,7 +174,7 @@ test("the public references keep the tag files and sections free of a version", 
 test("stop-charge is destructive in the public references", () => {
   const row = publicReferences["endpoints/charges.md"].split("\n").find((line) => line.includes("stop-charge"));
 
-  assert.equal(row, "| stop-charge | POST /api/v1/charges/{chargeId}/stop | Stop a charge. |  | D | [docs](https://docs.public-api.monta.com/api/stop-a-charge) |");
+  assert.equal(row, "| stop-charge | POST /api/v1/charges/{chargeId}/stop | Stop a charge. |  | D | [docs](https://docs.public-api.monta.com/api/v1/charges/chargeId/stop) |");
 });
 
 test("a deprecated public operation is listed in deprecated.md and left out of the endpoint files", () => {
@@ -174,8 +187,8 @@ test("a deprecated public operation is listed in deprecated.md and left out of t
 });
 
 test("rendering the same specs twice gives identical output", () => {
-  assert.deepEqual(renderReferences(PARTNER_REFERENCES, partnerSpecs), references);
-  assert.deepEqual(renderReferences(PUBLIC_REFERENCES, [fixtureSpec("public.yml")]), publicReferences);
+  assert.deepEqual(renderReferences(PARTNER_REFERENCES, partnerSpecs, partnerDocsIndexes), references);
+  assert.deepEqual(renderReferences(PUBLIC_REFERENCES, [fixtureSpec("public.yml")], publicDocsIndexes), publicReferences);
 });
 
 test("writing the references removes tag files of tags no longer in the spec", () => {

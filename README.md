@@ -114,6 +114,8 @@ The `monta-api` skill's references come from the Monta API specs (`https://partn
 
 The `monta-public-api` skill's references come from the Monta Public API spec (`https://public-api.monta.com/swagger/monta-public-api-2023-09-14.yml`), in `plugins/monta-public-api/skills/monta-public-api/references/`: `endpoints.md` indexes the tags, each linking `endpoints/<tag>.md` with the operations, safety classes, and docs links, next to `deprecated.md` and `schemas.md`. All of it is HTTP only.
 
+Each docs link is the page the docs site lists for that method and path in its endpoint index (`/openapi/monta-partner-api-v1-endpoints.txt`, `-v2-endpoints.txt` and `/openapi/monta-public-api-endpoints.txt`); an operation the index does not list yet (the docs site lists it after its next deploy) gets an empty docs cell. The indexes are read from `developer.monta.com` and `docs.public-api.monta.com`. To read them from another docs site, such as staging, set `PARTNER_DOCS_INDEX_ORIGIN` or `PUBLIC_DOCS_INDEX_ORIGIN` to its origin; the links still point at the production sites. Until the production sites serve the indexes (after the docs portal cutover), local runs need both variables set to the staging sites, as the regenerate workflow does.
+
 Do not edit them by hand. Run `npm ci` once, then `npm run generate` to regenerate both and `npm test` to test the generator. After each Monta API or Monta Public API production deploy they are regenerated automatically and land as one pull request that a human reviews before merging; each plugin whose references changed gets a patch version bump and a changelog entry. `skills/monta-api/references/conventions.md` stays hand-written.
 
 ## Example prompts

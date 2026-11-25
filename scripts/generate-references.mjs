@@ -2,7 +2,7 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { METHODS, PUBLIC_DOCS_BASE, partnerDocsBase, slugifyWithCounter, specOperations } from "./docs-links.mjs";
+import { METHODS, docsIndexUrl, parseDocsIndex, slugifyWithCounter, specOperations } from "./docs-links.mjs";
 import { operationSafety } from "./safety.mjs";
 
 const UNTAGGED = "Other";
@@ -37,12 +37,14 @@ ${SAFETY_LEGEND}`;
 // A spec with a null label gets no version in its tag file paths, headings and sections
 export const PARTNER_REFERENCES = {
   apiName: "Monta API",
+  docsIndexOriginEnv: "PARTNER_DOCS_INDEX_ORIGIN",
   outDir: fileURLToPath(new URL("../skills/monta-api/references/", import.meta.url)),
   specs: [
     {
       label: "v1",
       specUrl: "https://partner-api.monta.com/swagger/monta-partner-api-v1.yml",
-      docsBase: partnerDocsBase("v1"),
+      docsOrigin: "https://developer.monta.com",
+      docsIndexPath: "/openapi/monta-partner-api-v1-endpoints.txt",
       indexFile: "endpoints.md",
       intro: V1_INTRO,
       tagIntro: `The Tool column is the MCP tool name, see \`../../endpoints.md\`. ${SAFETY_LEGEND}`,
@@ -51,7 +53,8 @@ export const PARTNER_REFERENCES = {
     {
       label: "v2",
       specUrl: "https://partner-api.monta.com/swagger/monta-partner-api-v2.yml",
-      docsBase: partnerDocsBase("v2"),
+      docsOrigin: "https://developer.monta.com",
+      docsIndexPath: "/openapi/monta-partner-api-v2-endpoints.txt",
       indexFile: "endpoints-v2.md",
       intro: V2_INTRO,
       tagIntro: `HTTP only with the \`Monta-Version: v2\` header, none of these is an MCP tool, see \`../../endpoints-v2.md\`. ${SAFETY_LEGEND}`,
@@ -62,12 +65,14 @@ export const PARTNER_REFERENCES = {
 
 export const PUBLIC_REFERENCES = {
   apiName: "Monta Public API",
+  docsIndexOriginEnv: "PUBLIC_DOCS_INDEX_ORIGIN",
   outDir: fileURLToPath(new URL("../plugins/monta-public-api/skills/monta-public-api/references/", import.meta.url)),
   specs: [
     {
       label: null,
       specUrl: "https://public-api.monta.com/swagger/monta-public-api-2023-09-14.yml",
-      docsBase: PUBLIC_DOCS_BASE,
+      docsOrigin: "https://docs.public-api.monta.com",
+      docsIndexPath: "/openapi/monta-public-api-endpoints.txt",
       indexFile: "endpoints.md",
       intro: PUBLIC_INTRO,
       tagIntro: `HTTP only, none of these is an MCP tool, see \`../endpoints.md\`. ${SAFETY_LEGEND}`,
@@ -125,8 +130,8 @@ const firstSentence = (description) => {
   return firstParagraph.split(/(?<=\.)\s/)[0];
 };
 
-const indexedOperations = (spec, docsBase) =>
-  specOperations(spec, docsBase).map(({ method, path, operation, docsUrl }) => ({
+const indexedOperations = (spec, docsPages, entry) =>
+  specOperations(spec, docsPages, entry).map(({ method, path, operation, docsUrl }) => ({
     method,
     path,
     tag: operation.tags?.[0] ?? UNTAGGED,
@@ -136,7 +141,7 @@ const indexedOperations = (spec, docsBase) =>
     queryFilters: (operation.parameters ?? []).filter((parameter) => parameter.in === "query").map(({ name }) => name),
     safety: operationSafety(method, operation.operationId),
     deprecated: operation.deprecated === true,
-    docsLink: `[docs](${docsUrl})`,
+    docsLink: docsUrl !== null ? `[docs](${docsUrl})` : "",
   }));
 
 const methodAndPath = ({ method, path }) => `${method.toUpperCase()} ${path}`;
@@ -186,12 +191,12 @@ const schemasSection = (label, spec) => {
   return section(label, table(["Name", "Description", "Required fields"], rows));
 };
 
-// parsedSpecs holds the parsed spec of each entry in references.specs, in the same order
-export const renderReferences = ({ apiName, specs: specEntries }, parsedSpecs) => {
+// parsedSpecs and docsIndexes hold the parsed spec and docs index of each entry in references.specs, in the same order
+export const renderReferences = ({ apiName, specs: specEntries }, parsedSpecs, docsIndexes) => {
   const sources = specEntries.map((entry, index) => ({
     entry,
     spec: parsedSpecs[index],
-    operations: indexedOperations(parsedSpecs[index], entry.docsBase),
+    operations: indexedOperations(parsedSpecs[index], docsIndexes[index], entry),
   }));
   return {
     ...Object.fromEntries(sources.flatMap(({ entry, operations }) => endpointFiles(apiName, entry, operations))),
@@ -218,23 +223,30 @@ export const writeReferences = (outDir, references) => {
   }
 };
 
-const fetchSpec = async (specUrl) => {
-  const response = await fetch(specUrl);
+const fetchText = async (url) => {
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Fetching ${specUrl} failed with HTTP ${response.status}`);
+    throw new Error(`Fetching ${url} failed with HTTP ${response.status}`);
   }
   return response.text();
 };
 
 const loadSpec = async (specUrl) => {
-  const specText = await fetchSpec(specUrl);
+  const specText = await fetchText(specUrl);
   return parse(specText);
+};
+
+const loadDocsIndex = async (indexUrl) => {
+  const indexText = await fetchText(indexUrl);
+  return parseDocsIndex(indexText);
 };
 
 const main = async () => {
   for (const references of [PARTNER_REFERENCES, PUBLIC_REFERENCES]) {
+    const indexOrigin = process.env[references.docsIndexOriginEnv];
     const specs = await Promise.all(references.specs.map(({ specUrl }) => loadSpec(specUrl)));
-    writeReferences(references.outDir, renderReferences(references, specs));
+    const docsIndexes = await Promise.all(references.specs.map((entry) => loadDocsIndex(docsIndexUrl(entry, indexOrigin))));
+    writeReferences(references.outDir, renderReferences(references, specs, docsIndexes));
   }
 };
 

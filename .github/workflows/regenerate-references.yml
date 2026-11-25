@@ -22,6 +22,10 @@ jobs:
           node-version: '22'
       - run: npm ci
       - name: Generate the references from the Monta API and Monta Public API specs
+        # The production docs sites publish the endpoint indexes only after the portal cutover, so read them from staging until then
+        env:
+          PARTNER_DOCS_INDEX_ORIGIN: https://developer.staging.monta.com
+          PUBLIC_DOCS_INDEX_ORIGIN: https://docs.public-api.staging.monta.com
         run: npm run generate
       - name: Detect changes
         id: changes
